@@ -65,7 +65,7 @@
 // dp(status) 表示在选择状态为 status 下，满足优美排列的个数
 // 初始状态 dp(0)=1，求 dp(2^n-1)
 // count1(status) 表示 status 中有 1 的个数
-// dp(status) = sum{dp(~(1<<(i-1))) for 1<=i<=15 and (1<<(i-1))&status != 0 and (count1(status)%i==0 or i%count1(status)==0)}
+// dp(status) = sum{dp(~(1<<(i-1))&status) for 1<=i<=15 and (1<<(i-1))&status != 0 and (count1(status)%i==0 or i%count1(status)==0)}
 class Solution {
 public:
     int countArrangement(int n) {
@@ -79,15 +79,15 @@ public:
             auto count1 = __builtin_popcount(status);
             for (int i = 1; i <= 15; i++) {
                 // 遍历每位 1
-                int pre_status = 1<<(i-1)&status;
+                int pre_status = (1<<(i-1))&status;
                 if (pre_status == 0) continue;
                 // 当前 1 无效
                 if (count1%i != 0 and i%count1 != 0) continue;
                 // 状态转移
-                dp[status] += dp[pre_status];
+                dp[status] += dp[(~(1<<(i-1)))&status];
             }
         }
-        return dp[1<<n];
+        return dp[(1<<n)-1];
     }
 };
 // @lc code=end
